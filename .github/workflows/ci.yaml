@@ -7,22 +7,14 @@ on:
 jobs:
   get_changed_folder:
     runs-on: ubuntu-latest
+    outputs:
+      dir: ${{ steps.changed-files-dir-names.outputs.modified_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: '0'
       
-      # - uses: Stockopedia/action-get-changed-files@v1
-      #   id: get_changed
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     ignore: "**/*.js" # glob
-      #     foldersOnly: true # to only include folders in the output
-      #     format: json # either json, csv or newline
-      # - name: Echo
-      #   run: echo ${{ steps.get_changed.outputs.changed }}
-
       - name: Run changed-files with dir_names
         id: changed-files-dir-names
         uses: tj-actions/changed-files@v25
@@ -32,4 +24,21 @@ jobs:
       - name: Echo
         run: echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
 
+
+  for_each_folder:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [get_changed_folder]
+    strategy:
+      matrix:
+        dir: ${{fromJson(needs.get_changed_folder.outputs.dir)}} 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Check ${{matrix.dir}}
+        working-directory: ${{matrix.dir}}
+        run: |
+          echo ${{matrix.dir}}
+          ls -al
       
