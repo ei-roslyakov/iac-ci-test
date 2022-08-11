@@ -22,23 +22,26 @@ jobs:
           dir_names: "true"
       
       - name: Echo
-        run: echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
-
-
-  for_each_folder:
-    runs-on: ubuntu-latest
-    continue-on-error: false
-    needs: [get_changed_folder]
-    strategy:
-      matrix:
-        dir: ${{ fromJson(needs.get_changed_folder.outputs.dir) }} 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        
-      - name: Check ${{matrix.dir}}
-        working-directory: ${{ matrix.dir }}
         run: |
-          echo ${{ matrix.dir }}
-          ls -al
+          for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
+            echo "this golder has name - $folder"
+          done
+
+
+  # for_each_folder:
+  #   runs-on: ubuntu-latest
+  #   continue-on-error: false
+  #   needs: [get_changed_folder]
+  #   strategy:
+  #     matrix:
+  #       dir: ${{ fromJson(needs.get_changed_folder.outputs.dir) }} 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+        
+  #     - name: Check ${{matrix.dir}}
+  #       working-directory: ${{ matrix.dir }}
+  #       run: |
+  #         echo ${{ matrix.dir }}
+  #         ls -al
       
