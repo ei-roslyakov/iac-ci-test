@@ -33,9 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     needs: [get_changed_folder]
-    # strategy:
-    #   matrix:
-    #     dir: ${{needs.get_changed_folder.outputs.dir}}
+    strategy:
+      matrix:
+        dir: ${{needs.get_changed_folder.outputs.dir}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,6 +43,7 @@ jobs:
       - name: Echo
         run: |
           echo ${{needs.get_changed_folder.outputs.dir}}
+          ls -al
         
       # - name: Check ${{matrix.dir}}
       #   working-directory: ${{ matrix.dir }}
