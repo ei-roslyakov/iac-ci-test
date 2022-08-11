@@ -15,7 +15,7 @@ locals {
 
 inputs = {
   image_names = [
-    "amo-image",
+    "some-name-${local.env.env}-${local.app.app}-1",
   ]
   tags = {
     Name = "some-name-${local.env.env}-${local.app.app}"
