@@ -8,7 +8,7 @@ jobs:
   get_changed_folder:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.changed-files-dir-names.outputs.modified_files }}
+      dir: ${{ toJSON(steps.changed-files-dir-names.outputs.modified_files) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,14 +31,14 @@ jobs:
     needs: [get_changed_folder]
     strategy:
       matrix:
-        dir: ${{needs.get_changed_folder.outputs.dir}} 
+        dir: ${{ fromJson(needs.get_changed_folder.outputs.dir) }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         
       - name: Check ${{matrix.dir}}
-        working-directory: ${{matrix.dir}}
+        working-directory: ${{ matrix.dir }}
         run: |
-          echo ${{matrix.dir}}
+          echo ${{ matrix.dir }}
           ls -al
       
