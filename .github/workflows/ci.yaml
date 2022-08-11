@@ -24,10 +24,10 @@ jobs:
       
       - name: Echo
         run: |
-          for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
-            echo "this golder has name - $folder"
-          done
-          echo "${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $MATRIX_DATA
+          echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
+          # for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
+          #   echo "this golder has name - $folder"
+          # done
 
   for_each_folder:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
     needs: [get_changed_folder]
     strategy:
       matrix:
-        dir: [$MATRIX_DATA]
+        dir: ${{needs.get_changed_folder.outputs.dir}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
