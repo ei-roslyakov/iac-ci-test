@@ -27,10 +27,13 @@ def main():
 
     folders = args.folders[0]
 
+    folder_list = []
+
     for item in ast.literal_eval(folders):
-        print(item)
-        a = get_project_root(item)
-        print(a)
+        folder_path = get_project_root(item)
+        folder_list.append(folder_path)
+
+    print(folder_list)
 
 
 if __name__ == "__main__":
