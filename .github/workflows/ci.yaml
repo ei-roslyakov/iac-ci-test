@@ -26,7 +26,7 @@ jobs:
         id: make-output
         run: echo "::set-output name=value::${{ steps.changed-files-dir-names.outputs.modified_files }}"
 
-      - name: Make output
+      - name: Make output-1
         id: make-output
         run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
 
