@@ -24,8 +24,7 @@ jobs:
       
       - name: Make output
         id: make-output
-        run: |
-          run: echo "::set-output name=value::${{ steps.changed-files-dir-names.outputs.modified_files }}"
+        run: echo "::set-output name=value::${{ steps.changed-files-dir-names.outputs.modified_files }}"
       
       - name: Echo
         run: |
