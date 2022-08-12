@@ -10,7 +10,7 @@ locals {
   region = jsondecode(file(find_in_parent_folders("region.json")))
   env    = jsondecode(file(find_in_parent_folders("env.json")))
   app    = jsondecode(file(find_in_parent_folders("app.json")))
-  common = jsondecode(file(find_in_parent_folders("../common.json")))
+  common = jsondecode(file(find_in_parent_folders("common.json")))
 }
 
 
@@ -20,6 +20,9 @@ inputs = {
     "some-name-${local.env.env}-${local.app.app}-2",
     "some-name-${local.env.env}-${local.app.app}-3",
     "some-name-${local.env.env}-${local.app.app}-4",
+    "some-name-${local.env.env}-${local.app.app}-5",
+    "some-name-${local.env.env}-${local.app.app}-6",
+    "some-name-${local.env.env}-${local.app.app}-7",
   ]
   tags = {
     Name = "some-name-${local.env.env}-${local.app.app}"

@@ -2,7 +2,7 @@ terraform {
   extra_arguments "common_vars" {
     commands = get_terraform_commands_that_need_vars()
     required_var_files = [
-      find_in_parent_folders("../common.json"),
+      find_in_parent_folders("common.json"),
     ]
     optional_var_files = [
       find_in_parent_folders("app.json"),
@@ -11,8 +11,8 @@ terraform {
 }
 
 locals {
-  app    = jsondecode(file("app.json"))
-  common = jsondecode(file(find_in_parent_folders("common.json")))
+  app    = jsondecode(file(find_in_parent_folders("app.json")))
+  common = jsondecode(file("common.json"))
 }
 
 generate "main_provider" {
@@ -30,14 +30,6 @@ provider "aws" {
 }
 EOF
 }
-
-// generate "variables" {
-//   path      = "vars.tf"
-//   if_exists = "overwrite_terragrunt"
-//   contents  = <<EOF
-// variable "image_names" {}
-// EOF
-// }
 
 generate "common-vars" {
   path      = "common-vars.tf"
@@ -59,6 +51,6 @@ remote_state {
   config = {
     bucket = "rei-tf-state-s3"
     key    = "${local.app.app}/${path_relative_to_include()}/terraform.tfstate"
-    region = "${local.app.region}"
+    region = "${local.common.region}"
   }
 }
