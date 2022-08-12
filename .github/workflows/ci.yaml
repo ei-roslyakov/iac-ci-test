@@ -21,43 +21,49 @@ jobs:
         with:
           dir_names: "true"
           json: "true"
+      
+      - name: get_data_to_invoke_plan
+        id: get_folder
+        working-directory: ".github"
+        run: |
+          ./get_changed_folder.py --folders='["iac/bodyfit/ew1/dev/aws_ecr","iac/bodyfit/ew1/prod/aws_eip"]'
     
-      - name: Make output-1
-        id: make-output-1
-        # run: echo "DIRS=$(cat ${{ steps.changed-files-dir-names.outputs.modified_files }} | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
-        run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
+      # - name: Make output-1
+      #   id: make-output-1
+      #   # run: echo "DIRS=$(cat ${{ steps.changed-files-dir-names.outputs.modified_files }} | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
+      #   run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
 
-      - name: Test
-        run: echo $DIRS
+      # - name: Test
+      #   run: echo $DIRS
 
-      - name: Make output
-        id: make-output
-        run: echo "::set-output name=value::$DIRS"
+      # - name: Make output
+      #   id: make-output
+      #   run: echo "::set-output name=value::$DIRS"
       
-      - name: Echo
-        run: |
-          echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
-          # for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
-          #   echo "this golder has name - $folder"
-          # done
+      # - name: Echo
+      #   run: |
+      #     echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
+      #     # for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
+      #     #   echo "this golder has name - $folder"
+      #     # done
 
-  for_each_folder:
-    runs-on: ubuntu-latest
-    continue-on-error: false
-    needs: [get_changed_folder]
-    strategy:
-      matrix:
-        # dir: ${{needs.get_changed_folder.outputs.dir}}
-        dir: [".github/workflows","iac/bodyfit/ew1/dev/aws_ecr","iac/bodyfit/ew1/dev/aws_eip"]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # for_each_folder:
+  #   runs-on: ubuntu-latest
+  #   continue-on-error: false
+  #   needs: [get_changed_folder]
+  #   strategy:
+  #     matrix:
+  #       # dir: ${{needs.get_changed_folder.outputs.dir}}
+  #       dir: [".github/workflows","iac/bodyfit/eu-west-1/dev/aws_ecr","iac/bodyfit/eu-west-1/dev/aws_eip"]
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
       
-      - name: Echo
-        working-directory: ${{ matrix.dir }}
-        run: |
-          echo ${{needs.get_changed_folder.outputs.dir}}
-          ls -al
+  #     - name: Echo
+  #       working-directory: ${{ matrix.dir }}
+  #       run: |
+  #         echo ${{needs.get_changed_folder.outputs.dir}}
+  #         ls -al
         
       # - name: Check ${{matrix.dir}}
       #   working-directory: ${{ matrix.dir }}
