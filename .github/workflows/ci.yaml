@@ -49,6 +49,7 @@ jobs:
         run: |
           tfswitch 1.2.6 
           tgswitch 0.38.7
+          whereis terragrunt
           terraform --version
           terragrunt --version
 
