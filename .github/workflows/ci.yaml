@@ -28,47 +28,22 @@ jobs:
         run: |
           ls -al
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
+
+  run_folder:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [get_changed_folder]
+    strategy:
+      matrix:
+        dir: ${{needs.get_changed_folder.outputs.dir}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
     
-      # - name: Make output-1
-      #   id: make-output-1
-      #   # run: echo "DIRS=$(cat ${{ steps.changed-files-dir-names.outputs.modified_files }} | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
-      #   run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
-
-      # - name: Test
-      #   run: echo $DIRS
-
-      # - name: Make output
-      #   id: make-output
-      #   run: echo "::set-output name=value::$DIRS"
+      - name: Echo
+        working-directory: ${{ matrix.dir }}
+        run: |
+          echo ${{needs.get_changed_folder.outputs.dir}}
+          ls -al
       
-      # - name: Echo
-      #   run: |
-      #     echo ${{ steps.changed-files-dir-names.outputs.modified_files }}
-      #     # for folder in ${{ steps.changed-files-dir-names.outputs.modified_files }}; do
-      #     #   echo "this golder has name - $folder"
-      #     # done
-
-  # for_each_folder:
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: false
-  #   needs: [get_changed_folder]
-  #   strategy:
-  #     matrix:
-  #       # dir: ${{needs.get_changed_folder.outputs.dir}}
-  #       dir: [".github/workflows","iac/bodyfit/eu-west-1/dev/aws_ecr","iac/bodyfit/eu-west-1/dev/aws_eip"]
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-      
-  #     - name: Echo
-  #       working-directory: ${{ matrix.dir }}
-  #       run: |
-  #         echo ${{needs.get_changed_folder.outputs.dir}}
-  #         ls -al
-        
-      # - name: Check ${{matrix.dir}}
-      #   working-directory: ${{ matrix.dir }}
-      #   run: |
-      #     echo ${{ matrix.dir }}
-      #     ls -al
       
