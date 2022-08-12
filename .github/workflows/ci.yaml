@@ -7,7 +7,7 @@ jobs:
   get_changed_folder:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.make-output.outputs.modified_files }}
+      dir: ${{ steps.get_folder.outputs }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
         working-directory: ".github"
         run: |
           ls -al
-          python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }}
+          echo "::set-output name=jobs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
     
       # - name: Make output-1
       #   id: make-output-1
