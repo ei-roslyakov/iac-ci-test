@@ -15,7 +15,7 @@ locals {
 
 inputs = {
   name      = "${local.env.env}-${local.app.app}-nlb-ip"
-  count_eip = 7
+  count_eip = 8
   tags = {
     Name = "${local.env.env}-${local.app.app}-nlb-ip"
     App  = "${local.app.app}"

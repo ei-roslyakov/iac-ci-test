@@ -24,7 +24,7 @@ jobs:
     
       - name: Make output-1
         id: make-output-1
-        run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
+        run: echo "DIRS=$(cat ${{ steps.changed-files-dir-names.outputs.modified_files }} | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_ENV
 
       - name: Test
         run: echo $DIRS
