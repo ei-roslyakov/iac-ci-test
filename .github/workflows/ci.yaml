@@ -47,8 +47,8 @@ jobs:
     needs: [get_changed_folder]
     strategy:
       matrix:
-        dir: ${{needs.get_changed_folder.outputs.dir}}
-        # dir: ["iac/banda/ew1/dev/aws_ecr", "iac/banda/ew1/dev/aws_eip"]
+        # dir: ${{needs.get_changed_folder.outputs.dir}}
+        dir: [".github/workflows","iac/bodyfit/ew1/dev/aws_ecr","iac/bodyfit/ew1/dev/aws_eip"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
