@@ -21,17 +21,17 @@ jobs:
         with:
           dir_names: "true"
           json: "true"
-      
-      - name: Make output
-        id: make-output
-        run: echo "::set-output name=value::${{ steps.changed-files-dir-names.outputs.modified_files }}"
-
+    
       - name: Make output-1
         id: make-output-1
         run: echo "DIRS=${{ steps.changed-files-dir-names.outputs.modified_files }}" >> $GITHUB_ENV
 
       - name: Test
         run: echo $DIRS
+
+      - name: Make output
+        id: make-output
+        run: echo "::set-output name=value::$DIRS"
       
       - name: Echo
         run: |
