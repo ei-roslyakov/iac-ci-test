@@ -8,7 +8,7 @@ jobs:
   get_changed_folder:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.changed-files-dir-names.outputs.modified_files }}
+      dir: ${{ steps.make-output.outputs.modified_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -21,6 +21,11 @@ jobs:
         with:
           dir_names: "true"
           json: "true"
+      
+      - name: Make output
+        id: make-output
+        run: |
+          run: echo "::set-output name=value::${{ steps.changed-files-dir-names.outputs.modified_files }}"
       
       - name: Echo
         run: |
