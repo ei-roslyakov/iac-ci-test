@@ -43,13 +43,18 @@ jobs:
         run: curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | sudo bash
 
       - name: Installing terragrunt
-        run: curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.7/terragrunt_linux_amd64 | mv terragrunt_linux_amd64 /usr/bin/terragrunt
+        run: curl -L https://raw.githubusercontent.com/warrensbox/tgswitch/release/install.sh | bash
 
-   
-      - name: Echo
+      - name: install tf and tg
+        run: |
+          tfswitch 1.2.6 
+          tgswitch 0.38.7
+          terraform --version
+          terragrunt --version
+
+      - name: run plan
         working-directory: ${{ matrix.dir }}
         run: |
-          echo ${{needs.get_changed_folder.outputs.dir}}
           ls -al
       
       
