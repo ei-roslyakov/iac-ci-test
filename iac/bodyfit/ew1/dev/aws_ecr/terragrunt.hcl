@@ -29,6 +29,7 @@ inputs = {
     "some-name-${local.env.env}-${local.app.app}-11",
     "some-name-${local.env.env}-${local.app.app}-12",
     "some-name-${local.env.env}-${local.app.app}-13",
+    "some-name-${local.env.env}-${local.app.app}-14",
   ]
   tags = {
     Name = "some-name-${local.env.env}-${local.app.app}"
