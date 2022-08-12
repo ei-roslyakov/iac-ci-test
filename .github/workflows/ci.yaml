@@ -27,6 +27,7 @@ jobs:
         id: get_folder
         working-directory: ".github"
         run: |
+          ls -al
           ./get_changed_folder.py --folders='["iac/bodyfit/ew1/dev/aws_ecr","iac/bodyfit/ew1/prod/aws_eip"]'
     
       # - name: Make output-1
