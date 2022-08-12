@@ -35,8 +35,8 @@ jobs:
     needs: [get_changed_folder]
     strategy:
       matrix:
-        # dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
-        dir: ["iac/banda/ew1/dev/aws_ecr", "iac/banda/ew1/dev/aws_eip"]
+        dir: ${{fromJSON([needs.get_changed_folder.outputs.dir])}}
+        # dir: ["iac/banda/ew1/dev/aws_ecr", "iac/banda/ew1/dev/aws_eip"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
