@@ -26,7 +26,6 @@ jobs:
         id: get_folder
         working-directory: ".github"
         run: |
-          ls -al
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
 
   run_folder:
@@ -39,7 +38,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-    
+
+      - name: Installing tfswitch
+        run: curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | sudo bash
+
+      - name: Installing terragrunt
+        run: curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.7/terragrunt_linux_amd64 | mv terragrunt_linux_amd64 /usr/bin/terragrunt
+
+   
       - name: Echo
         working-directory: ${{ matrix.dir }}
         run: |
