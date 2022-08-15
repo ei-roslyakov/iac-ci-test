@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:ei-roslyakov/terraform-modules.git//aws_eip/?ref=tags/v0.0.2"
+  source = "git::ssh://git@github.com/ei-roslyakov/terraform-modules.git//aws_eip/?ref=tags/v0.0.2"
 }
 
 include "root" {
