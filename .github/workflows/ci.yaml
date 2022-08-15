@@ -83,7 +83,7 @@ jobs:
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
-          echo ${{ github.GITHUB_WORKSPACE }}
+          echo ${{ github.workspace }}
           echo ${{ matrix.dir }}
 #          terragrunt run-all plan -out=${{ matrix.dir }}/plan-${{ github.head_ref }}.file
 #          ls -al
