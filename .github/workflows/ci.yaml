@@ -84,5 +84,24 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           terragrunt run-all plan -out=${{ github.workspace }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
-          ls -al
           aws s3 cp plan-${{ github.head_ref }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
+
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    continue-on-error: false
+    needs: [get_changed_folder, make_plan]
+    environment: 'apply-infra'
+    strategy:
+      matrix:
+        dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Print Version
+        run: |
+          terraform --version
+          terragrunt --version
