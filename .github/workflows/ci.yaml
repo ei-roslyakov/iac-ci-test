@@ -50,6 +50,12 @@ jobs:
           export PATH=$PATH:$HOME/.bin
           tgswitch -b $HOME/.bin/terragrunt 0.38.0
 
+#      - name: Installing terragrunt
+#        run: |
+#          wget https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_amd64
+#          mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+#          chmod +x /usr/local/bin/terragrunt
+
       - name: install tf
         run: |
           tfswitch 1.2.6 
