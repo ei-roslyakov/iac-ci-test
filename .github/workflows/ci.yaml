@@ -80,6 +80,11 @@ jobs:
           name: id_ed25519
           known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
 
+      - name: Run Init
+        working-directory: ${{ matrix.dir }}
+        run: |
+          terragrunt run-all init
+
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
