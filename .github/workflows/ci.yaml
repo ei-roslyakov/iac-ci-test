@@ -86,7 +86,7 @@ jobs:
 
       - name: Check ssh
         run: |
-          ssh -vT git@github.com
+          ssh -vvvv git@github.com
 
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
