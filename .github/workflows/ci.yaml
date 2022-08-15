@@ -82,5 +82,5 @@ jobs:
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all plan -out=./plan-${{ env.GITHUB_REF_NAME }}.file
-          aws s3 cp ./plan-${{ env.GITHUB_REF_NAME }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/plan-${{ env.GITHUB_REF_NAME }}.file
+          terragrunt run-all plan -out=plan-${{ env.GITHUB_REF_NAME }}.file
+          aws s3 cp plan-${{ env.GITHUB_REF_NAME }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/plan-${{ env.GITHUB_REF_NAME }}.file
