@@ -71,21 +71,16 @@ jobs:
           role-to-assume: arn:aws:iam::948691256895:role/gh-action
           role-session-name: GithubActionsSession
 
+      - name: Print Version
+        run: |
+          cat ~/.aws/credentials
+
+
       - uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: id_ed25519
           known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
-
-#       - name: Write SSH keys
-#         run: |
-#           install -m 600 -D /dev/null ~/.ssh/id_ed25519
-#           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-#           echo ${{ secrets.KNOWN_HOSTS_OF_GITHUB }} > ~/.ssh/known_hosts
-
-#      - name: Check ssh
-#        run: |
-#          ssh -vvvv git@github.com
 
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
