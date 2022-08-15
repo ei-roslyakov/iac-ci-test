@@ -71,6 +71,10 @@ jobs:
           role-to-assume: arn:aws:iam::948691256895:role/gh-action
           role-session-name: GithubActionsSession
 
+      - name: Get creds
+        run: |
+          aws sts get-session-token
+
       - uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
