@@ -41,7 +41,7 @@ jobs:
 
       - name: Installing tfswitch
         run: |
-          apt install zip
+          sudo apt install zip
           wget wget https://releases.hashicorp.com/terraform/1.2.7/terraform_1.2.7_linux_amd64.zip
           unzip terraform_1.2.7_linux_amd64.zip \
           sudo mv terraform /usr/bin \
