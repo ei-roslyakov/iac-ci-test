@@ -4,8 +4,10 @@ on:
   push:
 
 env:
-  TF_VERSION : "1.2.7"
-  TG_VERSION : "v0.38.7"
+  TF_VERSION    : "1.2.7"
+  TG_VERSION    : "v0.38.7"
+  S3_BACKET_NAME: "rei-tf-state-s3"
+  S3_BACKET_KEY : "pr-s"
 
 jobs:
   get_changed_folder:
@@ -80,4 +82,5 @@ jobs:
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all plan
+          terragrunt run-all plan -out=./plan-${{ env.GITHUB_REF_NAME }}.file
+          aws s3 cp ./plan-${{ env.GITHUB_REF_NAME }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/plan-${{ env.GITHUB_REF_NAME }}.file
