@@ -83,6 +83,10 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H github.com > ~/.ssh/known_hosts
 
+      - name: Check ssh
+        run: |
+          ssh -vT git@github.com
+
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
