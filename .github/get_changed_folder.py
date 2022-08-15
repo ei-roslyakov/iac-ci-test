@@ -31,7 +31,7 @@ def main():
 
     for item in ast.literal_eval(folders):
         folder_path = get_project_root(item)
-        if folder_path is not None:
+        if folder_path is not None and folder_path not in folder_list:
             folder_list.append(folder_path)
 
     print(folder_list)
