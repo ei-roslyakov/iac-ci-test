@@ -71,12 +71,17 @@ jobs:
           role-to-assume: arn:aws:iam::948691256895:role/gh-action
           role-session-name: GithubActionsSession
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
-          if_key_exists: ignore
+      # - name: Install SSH Key
+      #   uses: shimataro/ssh-key-action@v2
+      #   with:
+      #     key: ${{ secrets.SSH_KEY }}
+      #     known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
+      #     if_key_exists: ignore
+      - name: Write SSH keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H github.com > ~/.ssh/known_hosts
 
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
