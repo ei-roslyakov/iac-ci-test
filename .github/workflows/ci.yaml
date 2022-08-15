@@ -28,8 +28,11 @@ jobs:
         run: |
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
 
-  run_folder:
+  make_plan:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     continue-on-error: false
     needs: [get_changed_folder]
     strategy:
@@ -45,29 +48,12 @@ jobs:
           wget https://releases.hashicorp.com/terraform/1.2.7/terraform_1.2.7_linux_amd64.zip
           unzip terraform_1.2.7_linux_amd64.zip
           sudo mv terraform /usr/bin
-#        run: curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | sudo bash
-
-#      - name: Installing terragrunt
-#        run: |
-#          wget https://raw.githubusercontent.com/warrensbox/tgswitch/release/install.sh
-#          chmod 755 install.sh
-#          ./install.sh -b $HOME/.bin
-#          export PATH=$PATH:$HOME/.bin
-#          tgswitch -b $HOME/.bin/terragrunt 0.38.0
 
       - name: Installing terragrunt
         run: |
           wget --quiet https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.7/terragrunt_linux_amd64
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
           sudo chmod +x /usr/local/bin/terragrunt
-
-#      - name: install tf
-#        run: |
-#          tfswitch 1.2.6
-
-#      - name: install tg
-#        run: |
-#          tgswitch 0.38.7
 
       - name: print version
         run: |
@@ -78,5 +64,14 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           ls -al
-      
-      
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: us-east-2
+          role-to-assume: arn:aws:iam::948691256895:role/gh-action
+          role-session-name: GithubActionsSession
+
+      - name: Copy index.html to s3
+        run: |
+          aws s3 ls
