@@ -124,5 +124,5 @@ jobs:
       - name: Apply
         working-directory: ${{ matrix.dir }}
         run: |
-          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file plan-${{ github.head_ref }}.file
-          terragrunt run-all apply --terragrunt-no-auto-init -auto-approve plan-${{ github.head_ref }}.file
+          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file plan.file
+          terragrunt run-all apply -auto-approve plan.file
