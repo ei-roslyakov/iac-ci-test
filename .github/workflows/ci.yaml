@@ -1,14 +1,16 @@
 name: Tests
 
 on:
-  push:
+#  push:
   pull_request:
 
 env:
-  TF_VERSION    : "1.2.7"
-  TG_VERSION    : "v0.38.7"
-  S3_BACKET_NAME: "rei-tf-state-s3"
-  S3_BACKET_KEY : "pr-s"
+  TF_VERSION        : "1.2.7"
+  TG_VERSION        : "v0.38.7"
+  AWS_REGION        : "us-east-2"
+  AWS_ROLE_TO_ASSUME: "arn:aws:iam::948691256895:role/gh-action"
+  S3_BACKET_NAME    : "rei-tf-state-s3"
+  S3_BACKET_KEY     : "pull-request"
 
 jobs:
   get_changed_folder:
@@ -35,7 +37,7 @@ jobs:
         run: |
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
 
-  make_plan:
+  plan:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -48,30 +50,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Installing TF
-        run: |
-          sudo apt install zip
-          wget --quiet https://releases.hashicorp.com/terraform/${{ env.TF_VERSION }}/terraform_${{ env.TF_VERSION }}_linux_amd64.zip
-          unzip terraform_${{ env.TF_VERSION }}_linux_amd64.zip
-          sudo mv terraform /usr/bin
-
-      - name: Installing TG
-        run: |
-          wget --quiet https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
-          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
-          sudo chmod +x /usr/local/bin/terragrunt
-
-      - name: Print Version
-        run: |
-          terraform --version
-          terragrunt --version
+   
+      - name: Install tf and tg
+        uses: ./.github/actions/install-tf-tg
+        with:
+          tf_version: ${{ env.TF_VERSION }}
+          tg_version: ${{ env.TG_VERSION }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-region: us-east-2
-          role-to-assume: arn:aws:iam::948691256895:role/gh-action
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: GithubActionsSession
 
       - uses: shimataro/ssh-key-action@v2
@@ -80,8 +70,64 @@ jobs:
           name: id_ed25519
           known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
 
-      - name: Run Plan
+      - name: Init
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all plan -out=plan-${{ github.event.pull_request.title }}.file
-          aws s3 cp plan-${{ github.event.pull_request.title }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/plan-${{ github.event.pull_request.title }}.file
+          terragrunt run-all init
+      
+      - name: Plan
+        working-directory: ${{ matrix.dir }}
+        run: |
+          terragrunt run-all plan -out=tfplan.file
+
+      - name: Upload data with plan
+        working-directory: ${{ matrix.dir }}
+        run: |
+          zip -r data-with-plan.zip .
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip
+ 
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    continue-on-error: false
+    needs: [get_changed_folder, plan]
+    environment: 'apply-infra'
+    strategy:
+      max-parallel: 1
+      matrix:
+        dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install tf and tg
+        uses: ./.github/actions/install-tf-tg
+        with:
+          tf_version: ${{ env.TF_VERSION }}
+          tg_version: ${{ env.TG_VERSION }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GithubActionsSession
+      
+      - uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: id_ed25519
+          known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
+      
+      - name: Get plan
+        working-directory: ${{ matrix.dir }}
+        run: |
+          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip 
+          unzip -u data-with-plan.zip
+      
+      - name: Apply infra
+        working-directory: ${{ matrix.dir }}
+        run: |
+          echo "Y" | terragrunt run-all apply tfplan.file
