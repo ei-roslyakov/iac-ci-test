@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
 
-  make_plan:
+  plan:
     runs-on: ubuntu-latest
     permissions:
       id-token: write

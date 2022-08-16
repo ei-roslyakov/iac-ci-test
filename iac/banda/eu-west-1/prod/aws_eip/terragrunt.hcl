@@ -14,10 +14,10 @@ locals {
 }
 
 inputs = {
-  name      = "${local.env.env}-${local.app.app}-nlb-ip-1"
+  name      = "${local.env.env}-${local.app.app}-${local.region.region_abbr}-nlb-ip"
   count_eip = 1
   tags = {
-    Name = "${local.env.env}-${local.app.app}-nlb-ip"
+    Name = "${local.env.env}-${local.app.app}-${local.region.region_abbr}-nlb-ip"
     App  = "${local.app.app}"
   }
 }
