@@ -78,8 +78,11 @@ jobs:
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all plan -out=${{ github.workspace }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
-          aws s3 cp plan-${{ github.head_ref }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
+          ls -al
+        
+        # terragrunt run-all plan -out=${{ github.workspace }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
+        # aws s3 cp plan-${{ github.head_ref }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
+    
 
   apply:
     runs-on: ubuntu-latest
@@ -130,4 +133,4 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           ls -al
-          terragrunt run-all apply -auto-approve plan.file
+          terragrunt run-all apply plan.file
