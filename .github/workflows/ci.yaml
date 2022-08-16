@@ -1,4 +1,4 @@
-name: Tests
+name: iac-ci
 
 on:
   pull_request:
