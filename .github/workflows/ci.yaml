@@ -87,7 +87,7 @@ jobs:
       id-token: write
       contents: write
     continue-on-error: false
-    needs: [get_changed_folder, make_plan]
+    needs: [get_changed_folder, plan]
     environment: 'apply-infra'
     strategy:
       matrix:
