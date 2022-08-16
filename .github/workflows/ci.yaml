@@ -130,4 +130,4 @@ jobs:
       - name: Apply infra
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all apply tfplan.file
+          echo "Y" | terragrunt run-all apply tfplan.file
