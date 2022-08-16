@@ -45,7 +45,6 @@ jobs:
     continue-on-error: false
     needs: [get_changed_folder]
     strategy:
-      max-parallel: 1
       matrix:
         dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
     steps:
@@ -74,7 +73,7 @@ jobs:
       - name: Run Init
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all init 2>/dev/null
+          terragrunt run-all init
 
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
@@ -114,7 +113,7 @@ jobs:
       - name: Init
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all init 2>/dev/null
+          terragrunt run-all init
 
       - name: Apply
         working-directory: ${{ matrix.dir }}
