@@ -15,26 +15,6 @@ terraform {
       find_in_parent_folders("region.json"),
     ]
   }
-  // extra_arguments "plan_args" {
-  //   commands = [
-  //     "plan"
-  //   ]
-
-  //   arguments = [
-  //     "-out", 
-  //     "${get_parent_terragrunt_dir()}/${path_relative_to_include()}/tf.p"
-  //   ]
-  // }
-
-  // extra_arguments "apply_args" {
-  //   commands = [
-  //     "apply"
-  //   ]
-
-  //   arguments = [
-  //     "${get_parent_terragrunt_dir()}/${path_relative_to_include()}/tf.p",
-  //   ]
-  // }
 }
 
 locals {

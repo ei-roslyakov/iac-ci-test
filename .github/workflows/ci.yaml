@@ -84,7 +84,7 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           zip -r data-with-plan.zip .
-          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip --quiet
  
   apply:
     runs-on: ubuntu-latest
@@ -124,7 +124,7 @@ jobs:
       - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip 
+          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip --quiet
           unzip -u data-with-plan.zip
       
       - name: Apply infra
