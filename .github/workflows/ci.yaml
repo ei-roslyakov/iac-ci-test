@@ -48,19 +48,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Installing TF
-        run: |
-          sudo apt install zip
-          wget --quiet https://releases.hashicorp.com/terraform/${{ env.TF_VERSION }}/terraform_${{ env.TF_VERSION }}_linux_amd64.zip
-          unzip terraform_${{ env.TF_VERSION }}_linux_amd64.zip
-          sudo mv terraform /usr/local/bin/
-
-      - name: Installing TG
-        run: |
-          wget --quiet https://github.com/gruntwork-io/terragrunt/releases/download/${{ env.TG_VERSION }}/terragrunt_linux_amd64
-          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
-          sudo chmod +x /usr/local/bin/terragrunt
+   
+      - name: Install tf and tg
+        uses: ./.github/actions/install-tf-tg
+        with:
+          tf_version: ${{ env.TF_VERSION }}
+          tg_version: ${{ env.TG_VERSION }}
 
       - name: Print Version
         run: |
