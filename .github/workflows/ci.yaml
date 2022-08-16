@@ -74,16 +74,18 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           terragrunt run-all init
+      
+      - name: Run Plan
+        working-directory: ${{ matrix.dir }}
+        run: |
+          terragrunt run-all plan -out=tfplan.file
 
       - name: Run Plan
         working-directory: ${{ matrix.dir }}
         run: |
-          ls -al
-        
-        # terragrunt run-all plan -out=${{ github.workspace }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
-        # aws s3 cp plan-${{ github.head_ref }}.file s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file
-    
-
+          zip -r data-with-plan.zip .
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip
+ 
   apply:
     runs-on: ubuntu-latest
     permissions:
@@ -127,10 +129,10 @@ jobs:
       - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/plan-${{ github.head_ref }}.file plan.file
+          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip 
+          unzip -u data-fit-plan.zip
       
       - name: Apply infra
         working-directory: ${{ matrix.dir }}
         run: |
-          ls -al
-          terragrunt run-all apply plan.file
+          terragrunt run-all apply tfplan.file

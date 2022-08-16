@@ -48,3 +48,4 @@ vendor
 .ruby-version
 .terraform.lock.hcl
 terragrunt
+*.zip
