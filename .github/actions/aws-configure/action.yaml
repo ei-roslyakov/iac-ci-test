@@ -11,6 +11,9 @@ inputs:
   aws_default_region:
     description: "Default region"
     required: true
+  aws_session_token:
+    description: "Default region"
+    required: true
   aws_profile_name:
     description: "AWS CLI profile name"
     default: "amo"
@@ -24,4 +27,5 @@ runs:
         aws configure --profile=${{ inputs.aws_profile_name }} set aws_access_key_id ${{ inputs.aws_key_id }}
         aws configure --profile=${{ inputs.aws_profile_name }} set aws_secret_access_key ${{ inputs.aws_secret_key_id }}
         aws configure --profile=${{ inputs.aws_profile_name }} set default.region ${{ inputs.aws_default_region }}
+        aws configure --profile=${{ inputs.aws_profile_name }} set aws_session_token ${{ inputs.aws_session_token }}
       shell: bash
