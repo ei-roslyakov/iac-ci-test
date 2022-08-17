@@ -82,9 +82,9 @@ jobs:
       - name: Upload data with plan
         working-directory: ${{ matrix.dir }}
         run: |
-          ref_without_space=$(echo ${{ matrix.dir }} | sed 's/\ /-/g')
+          ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
           zip -q -r data-with-plan.zip .
-          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/$ref_without_space/${{ github.head_ref }}/data-with-plan.zip --quiet
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip --quiet
  
   apply:
     runs-on: ubuntu-latest
@@ -124,8 +124,8 @@ jobs:
       - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          ref_without_space=$(echo ${{ matrix.dir }} | sed 's/\ /-/g')
-          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/$ref_without_space/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip --quiet
+          ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
+          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
           unzip -q -u data-with-plan.zip
       
       - name: Apply infra
