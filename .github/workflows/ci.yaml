@@ -8,8 +8,8 @@ env:
   TG_VERSION        : "v0.38.7"
   AWS_REGION        : "us-east-2"
   AWS_ROLE_TO_ASSUME: "arn:aws:iam::948691256895:role/gh-action"
-  S3_BACKET_NAME    : "rei-tf-state-s3"
-  S3_BACKET_KEY     : "pull-request"
+  S3_BUCKET_NAME    : "rei-tf-state-s3"
+  S3_BUCKET_KEY     : "pull-request"
 
 jobs:
   get_changed_folder:
@@ -93,60 +93,70 @@ jobs:
         run: |
           ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
           zip -q -r data-with-plan.zip .
-          aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip --quiet
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip --quiet
  
-  apply:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
-    continue-on-error: false
-    needs: [get_changed_folder, plan]
-    environment: 'apply-infra'
-    strategy:
-      max-parallel: 1
-      matrix:
-        dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # wait-for-manual-approval:
+  #   runs-on: ubuntu-latest
+  #   needs: [get_changed_folder, plan]
+  #   steps:
+  #     - uses: trstringer/manual-approval@v1
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: ei-roslyakov
+  
+  # apply:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ (github.event.review.state == 'approved')
+  #   permissions:
+  #     id-token: write
+  #     contents: write
+  #   continue-on-error: false
+  #   needs: [get_changed_folder, plan, wait-for-manual-approval]
+  #   # environment: 'apply-infra'
+  #   strategy:
+  #     max-parallel: 1
+  #     matrix:
+  #       dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Install tf and tg
-        uses: ./.github/actions/install-tf-tg
-        with:
-          tf_version: ${{ env.TF_VERSION }}
-          tg_version: ${{ env.TG_VERSION }}
+  #     - name: Install tf and tg
+  #       uses: ./.github/actions/install-tf-tg
+  #       with:
+  #         tf_version: ${{ env.TF_VERSION }}
+  #         tg_version: ${{ env.TG_VERSION }}
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@master
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          role-session-name: GithubActionsSession
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@master
+  #       with:
+  #         aws-region: ${{ env.AWS_REGION }}
+  #         role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+  #         role-session-name: GithubActionsSession
       
-      - name: Configure aws CLI profile
-        uses: ./.github/actions/aws-configure
-        with:
-          aws_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws_secret_key_id: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
-          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
-          aws_profile_name: "amo"
+  #     - name: Configure aws CLI profile
+  #       uses: ./.github/actions/aws-configure
+  #       with:
+  #         aws_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+  #         aws_secret_key_id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+  #         aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+  #         aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+  #         aws_profile_name: "amo"
       
-      - uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          name: id_ed25519
-          known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
+  #     - uses: shimataro/ssh-key-action@v2
+  #       with:
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         name: id_ed25519
+  #         known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
       
-      - name: Get plan
-        working-directory: ${{ matrix.dir }}
-        run: |
-          ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
-          aws s3 cp s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
-          unzip -q -u data-with-plan.zip
+  #     - name: Get plan
+  #       working-directory: ${{ matrix.dir }}
+  #       run: |
+  #         ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
+  #         aws s3 cp s3://${{ env.https://stackoverflow.com/questions/69493260/get-approval-status-in-github-action }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
+  #         unzip -q -u data-with-plan.zip
       
-      - name: Apply infra
-        working-directory: ${{ matrix.dir }}
-        run: |
-          echo "Y" | terragrunt run-all apply tfplan.file
+  #     - name: Apply infra
+  #       working-directory: ${{ matrix.dir }}
+  #       run: |
+  #         echo "Y" | terragrunt run-all apply tfplan.file
