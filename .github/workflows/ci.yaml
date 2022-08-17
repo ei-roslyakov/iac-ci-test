@@ -95,7 +95,7 @@ jobs:
           zip -q -r data-with-plan.zip .
           aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip --quiet
  
-  manual-approval:
+  wait-for-manual-approval:
     runs-on: ubuntu-latest
     needs: [get_changed_folder, plan]
     steps:
@@ -110,7 +110,7 @@ jobs:
       id-token: write
       contents: write
     continue-on-error: false
-    needs: [get_changed_folder, plan]
+    needs: [get_changed_folder, plan, wait-for-manual-approval]
     # environment: 'apply-infra'
     strategy:
       max-parallel: 1
