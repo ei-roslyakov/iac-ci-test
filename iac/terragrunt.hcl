@@ -1,6 +1,5 @@
 terraform {
   extra_arguments "common_vars" {
-    // commands = get_terraform_commands_that_need_vars()
     commands = [
       "plan",
       "import",
@@ -27,7 +26,7 @@ generate "main_provider" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "aws" {
-  profile                 = var.profile
+  profile                 = "${local.common.profile}"
   region                  = var.region
   default_tags {
    tags = {
