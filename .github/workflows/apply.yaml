@@ -88,7 +88,7 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
-          aws s3 cp s3://${{ env.https://stackoverflow.com/questions/69493260/get-approval-status-in-github-action }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
+          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
           unzip -q -u data-with-plan.zip
       
       - name: Apply infra
