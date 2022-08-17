@@ -1,8 +1,6 @@
 name: iac-ci
 
 on:
-  # pull_request:
-  #   types: [labeled]
   pull_request_review:
     types: [submitted]
 
@@ -87,8 +85,7 @@ jobs:
       - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
-          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
+          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip data-with-plan.zip --quiet
           unzip -q -u data-with-plan.zip
       
       - name: Apply infra
