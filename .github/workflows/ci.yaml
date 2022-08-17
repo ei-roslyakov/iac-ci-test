@@ -102,12 +102,17 @@ jobs:
       contents: write
     continue-on-error: false
     needs: [get_changed_folder, plan]
-    environment: 'apply-infra'
+    # environment: 'apply-infra'
     strategy:
       max-parallel: 1
       matrix:
         dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
     steps:
+      - uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: ei-roslyakov
+
       - name: Checkout
         uses: actions/checkout@v2
 
