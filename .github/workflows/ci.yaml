@@ -95,6 +95,15 @@ jobs:
           zip -q -r data-with-plan.zip .
           aws s3 cp data-with-plan.zip s3://${{ env.S3_BACKET_NAME }}/${{ env.S3_BACKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip --quiet
  
+  manual-approval:
+    runs-on: ubuntu-latest
+    needs: [get_changed_folder, plan]
+    steps:
+      - uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: ei-roslyakov
+  
   apply:
     runs-on: ubuntu-latest
     permissions:
@@ -108,11 +117,6 @@ jobs:
       matrix:
         dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
     steps:
-      - uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: ei-roslyakov
-
       - name: Checkout
         uses: actions/checkout@v2
 
