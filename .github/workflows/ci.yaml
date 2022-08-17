@@ -92,5 +92,5 @@ jobs:
         working-directory: ${{ matrix.dir }}
         run: |
           zip -q -r data-with-plan.zip .
-          aws s3 cp data-with-plan.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.head_ref }}/data-with-plan.zip --quiet
+          aws s3 cp data-with-plan.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.ref_name }}/data-with-plan.zip --quiet
  
