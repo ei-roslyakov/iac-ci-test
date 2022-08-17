@@ -63,6 +63,14 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: GithubActionsSession
 
+      - name: Configure aws CLI profile
+        uses: ./.github/actions/aws-configure
+        with:
+          aws_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_key_id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+          aws_profile_name: "amo"
+
       - uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -114,6 +122,14 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: GithubActionsSession
+      
+      - name: Configure aws CLI profile
+        uses: ./.github/actions/aws-configure
+        with:
+          aws_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_key_id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
+          aws_profile_name: "amo"
       
       - uses: shimataro/ssh-key-action@v2
         with:
