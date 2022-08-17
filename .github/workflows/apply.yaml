@@ -1,4 +1,4 @@
-name: iac-ci
+name: iac-ci-apply
 
 on:
   pull_request_review:
