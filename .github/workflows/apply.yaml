@@ -47,7 +47,7 @@ jobs:
       id-token: write
       contents: write
     continue-on-error: false
-    needs: [get_changed_folder, plan, wait-for-manual-approval]
+    needs: [get_changed_folder]
     strategy:
       max-parallel: 1
       matrix:
