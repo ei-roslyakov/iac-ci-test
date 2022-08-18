@@ -27,7 +27,7 @@ jobs:
       
       - name: ls
         if: failure()
-        id: get_reviewers
+        id: ls
         working-directory: ".github"
         run: |
           ls -al
