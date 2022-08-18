@@ -24,6 +24,7 @@ jobs:
         with:
           packages: |
             requests
+            loguru
       
       - name: ls
         id: ls
