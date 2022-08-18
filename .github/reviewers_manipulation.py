@@ -142,14 +142,14 @@ def main():
         reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
         print(reviewers)
     
-    # if not args.get_reviewers:
-        # reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
-        # removed_reviewers = delete_reviewers(
-        #     args.token, args.pr, reviewers, args.owner, args.repo
-        # )
-        # attached_removed_reviewers = set_reviewers(
-        #     args.token, args.pr, reviewers, args.owner, args.repo
-        # )
+    if not args.get_reviewers:
+        reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
+        removed_reviewers = delete_reviewers(
+            args.token, args.pr, reviewers, args.owner, args.repo
+        )
+        attached_removed_reviewers = set_reviewers(
+            args.token, args.pr, reviewers, args.owner, args.repo
+        )
     logger.info(f"Application finished")
 
 
