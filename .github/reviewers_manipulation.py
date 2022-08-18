@@ -1,4 +1,5 @@
 import argparse
+from traceback import print_tb
 import requests
 import loguru
 
@@ -19,7 +20,7 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--owner",
-        required=True,
+        required=False,
         default="ei-roslyakov",
         type=str,
         action="store",
@@ -28,7 +29,7 @@ def parse_args():
     parser.add_argument(
         "-r",
         "--repo",
-        required=True,
+        required=False,
         default="iac-ci-test",
         type=str,
         action="store",
@@ -54,26 +55,46 @@ def parse_args():
     return parser.parse_args()
 
 
+# def get_reviewers(token: str, pr_number: str, owner: str, repo: str):
+#     headers = {
+#         "Accept": "application/vnd.github+json",
+#         "Authorization": f"token {token}",
+#     }
+#     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/requested_reviewers"
+#     reviewers_list = []
+#     try:
+#         reviewers_r = requests.get(url, headers=headers)
+#         logger.info(f"Get reviewers status: {reviewers_r.status_code}")
+#         reviewers = reviewers_r.json()
+#         print(reviewers)
+#         for user in reviewers["users"]:
+#             reviewers_list.append(user["login"])
+
+#     except requests.exceptions.RequestException as e:
+#         logger.exception(f"Somthing went wrong {e}")
+
+#     logger.info(f"Reviewers are: {reviewers_list}")
+#     return reviewers_list
+
 def get_reviewers(token: str, pr_number: str, owner: str, repo: str):
     headers = {
         "Accept": "application/vnd.github+json",
         "Authorization": f"token {token}",
     }
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/requested_reviewers"
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/reviews"
     reviewers_list = []
     try:
         reviewers_r = requests.get(url, headers=headers)
         logger.info(f"Get reviewers status: {reviewers_r.status_code}")
         reviewers = reviewers_r.json()
-        for user in reviewers["users"]:
-            reviewers_list.append(user["login"])
+        for user in reviewers:
+            reviewers_list.append(user["user"]["login"])
 
     except requests.exceptions.RequestException as e:
         logger.exception(f"Somthing went wrong {e}")
 
     logger.info(f"Reviewers are: {reviewers_list}")
     return reviewers_list
-
 
 def delete_reviewers(
     token: str, pr_number: str, reviewers: list, owner: str, repo: str
@@ -117,15 +138,17 @@ def main():
 
     logger.info(f"Application started")
     if args.get_reviewers:
-        reviewers = get_reviewers(args.token, args.pr)
+        reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
         print(reviewers)
-    reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
-    removed_reviewers = delete_reviewers(
-        args.token, args.pr, reviewers, args.owner, args.repo
-    )
-    attached_removed_reviewers = set_reviewers(
-        args.token, args.pr, reviewers, args.owner, args.repo
-    )
+    
+    # if not args.get_reviewers:
+        # reviewers = get_reviewers(args.token, args.pr, args.owner, args.repo)
+        # removed_reviewers = delete_reviewers(
+        #     args.token, args.pr, reviewers, args.owner, args.repo
+        # )
+        # attached_removed_reviewers = set_reviewers(
+        #     args.token, args.pr, reviewers, args.owner, args.repo
+        # )
     logger.info(f"Application finished")
 
 
