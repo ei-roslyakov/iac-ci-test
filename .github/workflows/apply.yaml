@@ -96,6 +96,11 @@ jobs:
         run: |
           echo "Y" | terragrunt run-all apply tfplan.file
 
+      - uses: actions/setup-python@v2
+        if: failure()
+        with:
+          python-version: "3.9"
+
       - uses: BSFishy/pip-action@v1
         if: failure()
         with:
