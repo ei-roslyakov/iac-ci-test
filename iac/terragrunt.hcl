@@ -17,7 +17,6 @@ terraform {
 }
 
 locals {
-  app    = jsondecode(file(find_in_parent_folders("app.json")))
   common = jsondecode(file("common.json"))
 }
 
@@ -56,7 +55,7 @@ remote_state {
   }
   config = {
     bucket = "rei-tf-state-s3"
-    key    = "${local.app.app}/${path_relative_to_include()}/terraform.tfstate"
+    key    = "${path_relative_to_include()}/${path_relative_to_include()}/terraform.tfstate"
     region = "${local.common.region}"
   }
 }
