@@ -1,7 +1,8 @@
-name: iac-ci-plan
+name: iac-ci-apply
 
 on:
-  pull_request:
+  pull_request_review:
+    types: [submitted]
 
 env:
   TF_VERSION        : "1.2.7"
@@ -10,10 +11,14 @@ env:
   AWS_ROLE_TO_ASSUME: "arn:aws:iam::948691256895:role/gh-action"
   S3_BUCKET_NAME    : "rei-tf-state-s3"
   S3_BUCKET_KEY     : "pull-request"
+  REPO_OWNER        : "ei-roslyakov"
+  REPO_URL          : "iac-ci-test"
+
 
 jobs:
   get_changed_folder:
     runs-on: ubuntu-latest
+    if: ${{ (github.event.review.state == 'approved') }}
     outputs:
       dir: ${{ steps.get_folder.outputs.dirs }}
     steps:
@@ -30,26 +35,31 @@ jobs:
           json: "true"
 
       - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
       - name: get_data_to_invoke_plan
         id: get_folder
         working-directory: ".github"
         run: |
           echo "::set-output name=dirs::$(python ./get_changed_folder.py --folders=${{ steps.changed-files-dir-names.outputs.modified_files }})"
-
-  plan:
+  
+  apply:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: write
+      pull-requests: write
     continue-on-error: false
     needs: [get_changed_folder]
     strategy:
+      max-parallel: 1
       matrix:
         dir: ${{fromJSON(needs.get_changed_folder.outputs.dir)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-   
+
       - name: Install tf and tg
         uses: ./.github/actions/install-tf-tg
         with:
@@ -62,7 +72,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: GithubActionsSession
-
+      
       - name: Configure aws CLI profile
         uses: ./.github/actions/aws-configure
         with:
@@ -71,26 +81,40 @@ jobs:
           aws_default_region: ${{ env.AWS_DEFAULT_REGION }}
           aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           aws_profile_name: "amo"
-
+      
       - uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: id_ed25519
           known_hosts: ${{ secrets.KNOWN_HOSTS_OF_GITHUB }}
-
-      - name: Init
-        working-directory: ${{ matrix.dir }}
-        run: |
-          terragrunt run-all init
       
-      - name: Plan
+      - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          terragrunt run-all plan -out=tfplan.file
+          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.ref_name }}/data-with-plan.zip data-with-plan.zip --quiet
+          unzip -q -u data-with-plan.zip
+      
+      - name: Apply infra
+        working-directory: ${{ matrix.dir }}
+        run: |
+          echo "Y" | terragrunt run-all apply tfplan.file
 
-      - name: Upload data with plan
-        working-directory: ${{ matrix.dir }}
+      - uses: actions/setup-python@v2
+        if: failure()
+        with:
+          python-version: "3.9"
+
+      - uses: BSFishy/pip-action@v1
+        if: failure()
+        with:
+          packages: |
+            requests
+            loguru
+      
+      - name: re-request-review
+        if: failure()
+        id: re-request-review
+        working-directory: ".github"
         run: |
-          zip -q -r data-with-plan.zip .
-          aws s3 cp data-with-plan.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.ref_name }}/data-with-plan.zip --quiet
- 
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          python ./reviewers_manipulation.py --token ${{ secrets.RE_REQUEST_TOKEN }} --owner ${{ env.REPO_OWNER }} --repo ${{ env.REPO_URL }} --pr $PR_NUMBER
