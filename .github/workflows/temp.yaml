@@ -30,7 +30,7 @@ jobs:
         id: ls
         working-directory: ".github"
         run: |
-          ls -al
+          ls -al /some/folder
 
       - name: get_data_to_invoke_plan
         if: failure()
