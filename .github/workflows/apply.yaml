@@ -49,6 +49,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
+      pull-requests: write
     continue-on-error: false
     needs: [get_changed_folder]
     strategy:
@@ -115,7 +116,5 @@ jobs:
         id: re-request-review
         working-directory: ".github"
         run: |
-          python --version
           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
-          echo $PR_NUMBER
-          python ./reviewers_manipulation.py --token ${{ secrets.GITHUB_TOKEN }} --owner ${{ env.REPO_OWNER }} --repo ${{ env.REPO_URL }} --pr $PR_NUMBER
+          python ./reviewers_manipulation.py --token ${{ secrets.RE_REQUEST_TOKEN }} --owner ${{ env.REPO_OWNER }} --repo ${{ env.REPO_URL }} --pr $PR_NUMBER
