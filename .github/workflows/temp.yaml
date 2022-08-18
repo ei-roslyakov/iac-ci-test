@@ -26,7 +26,6 @@ jobs:
             requests
       
       - name: ls
-        if: failure()
         id: ls
         working-directory: ".github"
         run: |
