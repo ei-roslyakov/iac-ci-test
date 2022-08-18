@@ -55,27 +55,6 @@ def parse_args():
     return parser.parse_args()
 
 
-# def get_reviewers(token: str, pr_number: str, owner: str, repo: str):
-#     headers = {
-#         "Accept": "application/vnd.github+json",
-#         "Authorization": f"token {token}",
-#     }
-#     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/requested_reviewers"
-#     reviewers_list = []
-#     try:
-#         reviewers_r = requests.get(url, headers=headers)
-#         logger.info(f"Get reviewers status: {reviewers_r.status_code}")
-#         reviewers = reviewers_r.json()
-#         print(reviewers)
-#         for user in reviewers["users"]:
-#             reviewers_list.append(user["login"])
-
-#     except requests.exceptions.RequestException as e:
-#         logger.exception(f"Somthing went wrong {e}")
-
-#     logger.info(f"Reviewers are: {reviewers_list}")
-#     return reviewers_list
-
 def get_reviewers(token: str, pr_number: str, owner: str, repo: str):
     headers = {
         "Accept": "application/vnd.github+json",
