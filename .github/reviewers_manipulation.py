@@ -88,7 +88,8 @@ def get_reviewers(token: str, pr_number: str, owner: str, repo: str):
         logger.info(f"Get reviewers status: {reviewers_r.status_code}")
         reviewers = reviewers_r.json()
         for user in reviewers:
-            reviewers_list.append(user["user"]["login"])
+            if user["user"]["login"] not in reviewers_list:
+                reviewers_list.append(user["user"]["login"])
 
     except requests.exceptions.RequestException as e:
         logger.exception(f"Somthing went wrong {e}")
