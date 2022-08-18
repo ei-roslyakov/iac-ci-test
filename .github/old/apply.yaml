@@ -1,8 +1,6 @@
-name: iac-ci
+name: iac-ci-apply
 
 on:
-  # pull_request:
-  #   types: [labeled]
   pull_request_review:
     types: [submitted]
 
@@ -87,12 +85,10 @@ jobs:
       - name: Get plan
         working-directory: ${{ matrix.dir }}
         run: |
-          ref_without_space=$(echo "${{ github.head_ref }}" | sed 's/\ /-/g')
-          aws s3 cp s3://${{ env.https://stackoverflow.com/questions/69493260/get-approval-status-in-github-action }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/$ref_without_space/data-with-plan.zip data-with-plan.zip --quiet
+          aws s3 cp s3://${{ env.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_KEY }}/${{ matrix.dir }}/${{ github.ref_name }}/data-with-plan.zip data-with-plan.zip --quiet
           unzip -q -u data-with-plan.zip
       
       - name: Apply infra
         working-directory: ${{ matrix.dir }}
         run: |
-          echo "done"
-        # echo "Y" | terragrunt run-all apply tfplan.file
+          echo "Y" | terragrunt run-all apply tfplan.file
