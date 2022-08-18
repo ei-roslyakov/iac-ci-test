@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.9"
-          
+
       - name: get_data_to_invoke_plan
         id: get_folder
         working-directory: ".github"
@@ -108,5 +108,7 @@ jobs:
         id: re-request-review
         working-directory: ".github"
         run: |
+          python --version
           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo $PR_NUMBER
           python ./reviewers_manipulation.py --token ${{ secrets.GITHUB_TOKEN }} --owner ${{ env.REPO_OWNER }} --repo ${{ env.REPO_URL }} --pr $PR_NUMBER
