@@ -9,6 +9,11 @@ jobs:
     steps:
       - uses: actions/setup-python@v2
 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
       - name: get_data_to_invoke_plan
         id: get_reviewers
         working-directory: ".github"
