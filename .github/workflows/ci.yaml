@@ -86,6 +86,7 @@ jobs:
       - name: Plan
         working-directory: ${{ matrix.dir }}
         run: |
+          echo "plan for ${{ matrix.dir }}"
           terragrunt run-all plan -out=tfplan.file
 
       - name: Upload data with plan
