@@ -5,7 +5,7 @@ import requests
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('t', '--token', required=True, type=str, default="default", action="store", help="GH token"),
+    parser.add_argument('-t', '--token', required=True, type=str, default="default", action="store", help="GH token"),
     parser.add_argument('--get-reviewers',
         required=False,
         type=bool,
