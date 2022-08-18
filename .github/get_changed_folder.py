@@ -5,21 +5,21 @@ import ast
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', '--folders', nargs='+', default=[]),
+    parser.add_argument("-f", "--folders", nargs="+", default=[]),
 
     return parser.parse_args()
 
 
-def get_project_root(path_string, sep='/'):
+def get_project_root(path_string, sep="/"):
     parts = path_string.split(sep)
 
     if "dev" in parts:
         index = parts.index("dev")
-        return sep.join(parts[:index + 1])
+        return sep.join(parts[: index + 1])
 
     if "prod" in parts:
         index = parts.index("prod")
-        return sep.join(parts[:index + 1])
+        return sep.join(parts[: index + 1])
 
 
 def main():
