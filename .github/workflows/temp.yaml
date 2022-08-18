@@ -1,4 +1,4 @@
-name: iac-ci-plan
+name: temp
 
 on:
   workflow_dispatch:
