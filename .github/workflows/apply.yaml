@@ -1,6 +1,7 @@
 name: iac-ci-apply
 
 on:
+  workflow_dispatch:
   pull_request_review:
     types: [submitted]
 
