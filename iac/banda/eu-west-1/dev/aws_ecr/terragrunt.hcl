@@ -16,9 +16,7 @@ locals {
 
 inputs = {
   image_names = [
-    "some-name-${local.env.env}-${local.app.app}-${local.region.region_abbr}-1",
-    "some-name-${local.env.env}-${local.app.app}-${local.region.region_abbr}-2",
-    "some-name-${local.env.env}-${local.app.app}-${local.region.region_abbr}-3",
+    "some-name-${local.env.env}-${local.app.app}-${local.region.region_abbr}-1"
   ]
   tags = {
     Some = "value"
