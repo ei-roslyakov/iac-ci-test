@@ -6,7 +6,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-f", "--folders", nargs="+", default=[]),
-    parser.add_argument("-d", "--lookup-dirs", type=list, default=[
+    parser.add_argument("-d", "--lookup-dirs", nargs="+", default=[
         "dev",
         "stage",
         "prod",
