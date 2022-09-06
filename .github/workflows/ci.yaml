@@ -10,7 +10,7 @@ env:
   AWS_ROLE_TO_ASSUME: "arn:aws:iam::948691256895:role/gh-action"
   S3_BUCKET_NAME    : "rei-tf-state-s3"
   S3_BUCKET_KEY     : "pull-request"
-  LOOKUP_DIRS       : "['dev', 'stage', 'prod', 'common']"
+  LOOKUP_DIRS       : "'dev', 'stage', 'prod', 'common'"
 
 jobs:
   get_changed_folder:
