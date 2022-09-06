@@ -6,20 +6,23 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-f", "--folders", nargs="+", default=[]),
+    parser.add_argument("-d", "--lookup-dirs", type=list, default=[
+        "dev",
+        "stage",
+        "prod",
+        "common"
+    ])
 
     return parser.parse_args()
 
 
-def get_project_root(path_string, sep="/"):
+def get_project_root(path_string, lookup_dirs, sep="/"):
     parts = path_string.split(sep)
 
-    if "dev" in parts:
-        index = parts.index("dev")
-        return sep.join(parts[: index + 1])
-
-    if "prod" in parts:
-        index = parts.index("prod")
-        return sep.join(parts[: index + 1])
+    for dir in lookup_dirs:
+        if dir in parts:
+            index = parts.index(dir)
+            return sep.join(parts[: index + 1])
 
 
 def main():
@@ -30,7 +33,7 @@ def main():
     folder_list = []
 
     for item in ast.literal_eval(folders):
-        folder_path = get_project_root(item)
+        folder_path = get_project_root(item, args.lookup_dirs)
         if folder_path is not None and folder_path not in folder_list:
             folder_list.append(folder_path)
 
